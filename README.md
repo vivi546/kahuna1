@@ -1,4 +1,4 @@
-# PHP & MariaDB Development Enviroment Tester
+/# PHP & MariaDB Development Enviroment Tester
 
 ## Purpose
 

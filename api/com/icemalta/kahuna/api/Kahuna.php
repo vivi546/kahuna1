@@ -1,6 +1,24 @@
 <?php
+/*util*/
 require 'com/icemalta/kahuna/util/ApiUtil.php';
+/*/controller*/
+require 'com/icemalta/kahuna/controller/ProductController.php';
+/*/model*/
+require 'com/icemalta/kahuna/model/Sales.php';   
+require 'com/icemalta/kahuna/model/Product.php';
+require 'com/icemalta/kahuna/model/User.php';   
+
+
+/*model*/
+use com\icemalta\kahuna\model\Product;
+use com\icemalta\kahuna\model\Sale;
+use com\icemalta\kahuna\model\User;
+/*controller*/
+use com\icemalta\kahuna\controller\ProductController;
+/*util*/
 use com\icemalta\kahuna\util\ApiUtil;
+
+
 
 cors();
 
@@ -43,6 +61,7 @@ switch ($requestMethod) {
         sendResponse(null, 405, 'Method not allowed.');
 }
 
+
 /* Extract EndPoint */
 $parsedURI = parse_url($_SERVER["REQUEST_URI"]);
 $path = explode('/', str_replace($BASE_URI, "", $parsedURI["path"]));
@@ -68,6 +87,162 @@ $endpoints["/"] = function (string $requestMethod, array $requestData): void {
 $endpoints["404"] = function (string $requestMethod, array $requestData): void {
     sendResponse(null, 404, "Endpoint " . $requestData["endPoint"] . " not found.");
 };
+
+
+// try { /*API végpontok meghívása -------------------------------------------------------------------------------------*/
+//     if (isset($endpoints[$endPoint])) { //osszes endpoint. [$endPoint]->endpoints gyujtemenybol a megfelelot valasztjuk.
+//                         $endpoints[$endPoint]($requestMethod, $requestData);
+//     } else {
+//       $endpoints["404"]($requestMethod, array("endPoint" => $endPoint));
+//             }
+// } catch (Exception $e) {
+//          sendResponse(null, 500, $e->getMessage());
+//   }   catch (Error $e) {
+//             sendResponse(null, 500, $e->getMessage());
+//       }
+
+
+
+/*Product----------*/
+$endpoints["product"] = function (string $requestMethod, array $requestData): void {
+                    if($requestMethod === 'GET') {
+                                $products = Product::load(); /*load in class_Product */
+                                sendResponse($products);
+                    }
+                        elseif($requestMethod === 'POST') {
+                                $serial = $requestData['serial'];
+                                $name = $requestData['name'];
+                                $warranty = $requestData['warranty'];
+
+                                $product = new Product($serial, $name, $warranty);
+                                $product = Product::save($product);
+                                sendResponse($product, 201); 
+                        }   elseif ($requestMethod === 'DELETE') {
+                            $id = $requestData['id'];
+                            sendResponse(null, 501, 'Deleting');
+
+                        } else {
+                            sendResponse(null, 405, 'Method Not allowed');
+                                 }
+};
+
+
+
+/*user-------------*/
+$endpoints["user"] = function (string $requestMethod, array $requestData): void {
+                                if ($requestMethod === 'POST') {
+                                                        $email = $requestData['email'];
+                                                        $password = $requestData['password'];
+                                                        $user = new User($email, $password);
+                                                        $user = User::save($user);
+                                                        sendResponse($user, 201);
+                                } elseif($requestMethod === 'GET') {
+                                    $email = $requestData['email'];
+                                    $user = new User(email: $email);
+                                    $user = User::getUser($email);
+                                    sendResponse($user);
+                                } else if ($requestMethod === 'PATCH') {
+                                                        sendResponse(null, 501, 'Update not implemented yet');
+                                    }   else if($requestMethod === 'DELETE') {
+                                                        sendResponse(null, 501, 'Deleting' );
+                                        }   else {
+                                                sendResponse(null, 405, 'Method_not_Allowed');
+                                            }
+};
+
+
+/*sale-----------*/
+$endpoints["sale"] = function (string $requestMethod, array $requestData): void {
+    if ($requestMethod === 'GET') {
+        $sales = Sale::load(); // Load all sales from the database
+        sendResponse($sales);
+    } elseif ($requestMethod === 'POST') {
+        $userId = $requestData['userId'] ?? null;
+        $productId = $requestData['productId'] ?? null;
+        
+        if (!$userId || !$productId) {
+            sendResponse(null, 400, 'Missing userId or productId');
+            return;
+        }
+        
+        $sale = new Sale($userId, $productId);
+        $sale = Sale::save($sale);
+        sendResponse($sale, 201);
+    } elseif ($requestMethod === 'DELETE') {
+        $id = $requestData['id'] ?? null;
+        
+        if (!$id) {
+            sendResponse(null, 400, 'Missing sale ID');
+            return;
+        }
+        
+        $deleted = Sale::delete($id);
+        if ($deleted) {
+            sendResponse(null, 200, 'Sale deleted successfully');
+        } else {
+            sendResponse(null, 404, 'Sale not found');
+        }
+    } else {
+        sendResponse(null, 405, 'Method Not Allowed');
+    }
+};
+
+/*warranty----------------*/
+$endpoints['check-warranty'] = function (string $requestMethod, array $requestData): void {
+    if ($requestMethod !== 'GET') {
+        sendResponse(null, 405, 'Method Not Allowed');
+        return;
+    }
+
+    $userId = $requestData['userId'] ?? null;
+    $serial = $requestData['serial'] ?? null;
+
+    if (!$userId || !$serial) {
+        sendResponse(null, 400, 'Missing parameters');
+        return;
+    }
+
+    $sales = Sale::getWarrantyInfo($userId, $serial);
+
+    if (!$sales) {
+        sendResponse(null, 404, 'No matching records found');
+        return;
+    }
+
+    sendResponse($sales, 200);
+};
+
+
+
+
+
+/*GET view product list, or a product
+  POST register product
+  POST delete product
+   */
+
+/*user*/
+
+/*POST register
+    POST login - token
+    POST logout/
+
+
+/*tickets?
+    POST create ticket ticket nyitasa ha van garancia
+    */
+
+    /*admin
+    GET - admin get tickets
+    POST - reply ticket
+    POST - add product  */
+
+
+
+
+
+
+/*--------------------------------------------------------------------------------------------------------------------*/
 
 function cors()
 {
