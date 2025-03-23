@@ -11,10 +11,7 @@
 
   class AuthController extends Controller {
 
-                      public static function login(array $params, array $data): void { //ez a kod csupan egyeztetest vegez, es tokent ad, vagy nem ad.
-                                                      $email = $data['email']; 
-                                                      $password = $data['password']; 
-                                                      $user = new User(email: $email, password: $password); 
+                      public static function login(User $user): void { //ez a kod csupan egyeztetest vegez, es tokent ad, vagy nem ad.
                                                       $user = User::authenticate($user);
 
                                                       if ($user) { 
@@ -27,9 +24,9 @@
                       }
 
 
-        public static function logout(array $params, array $data): void { //forToken not for user
+        public static function logout(array $data): void { //forToken not for user
                                         if (self::checkToken($data)) { 
-                                                            $userId = $data['api_user']; 
+                                                            $userId = $data['user']; 
                                                             $token = new AccessToken(userId: $userId); 
                                                             $token = AccessToken::delete($token); 
                                                             self::sendResponse(data: ['message' => 'Logged out']); 

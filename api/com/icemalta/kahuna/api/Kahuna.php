@@ -4,19 +4,25 @@ require 'com/icemalta/kahuna/util/ApiUtil.php';
 /*/controller*/
 require 'com/icemalta/kahuna/controller/UserController.php';
 require 'com/icemalta/kahuna/controller/ProductController.php';
+require 'com/icemalta/kahuna/controller/AuthController.php';   
+
 /*/model*/
 require 'com/icemalta/kahuna/model/Sales.php';   
 require 'com/icemalta/kahuna/model/Product.php';
-require 'com/icemalta/kahuna/model/User.php';   
+require 'com/icemalta/kahuna/model/User.php';
+require 'com/icemalta/kahuna/model/AccessToken.php';
+
+
 
 
 /*model*/
-use com\icemalta\kahuna\controller\UserController;
-use com\icemalta\kahuna\model\Product;
 use com\icemalta\kahuna\model\Sale;
 use com\icemalta\kahuna\model\User;
 /*controller*/
 use com\icemalta\kahuna\controller\ProductController;
+use com\icemalta\kahuna\controller\AuthController;
+use com\icemalta\kahuna\controller\UserController;
+
 /*util*/
 use com\icemalta\kahuna\util\ApiUtil;
 
@@ -127,8 +133,8 @@ $endpoints["product"] = function (string $requestMethod, array $requestData): vo
 
 
 /*user-------------*/
-$endpoints["user"] = function (string $requestMethod, array $requestData): void {
-                                if ($requestMethod === 'POST') {
+$endpoints["user"] = function (string $requestMethod, array $requestData): void { //uj user regisztral! getUserInfo! delete user! 
+                                if ($requestMethod === 'POST') { //
                                                         $email = $requestData['email'];
                                                         $password = $requestData['password'];
                                                         $user = new User($email, $password);
@@ -153,38 +159,38 @@ $endpoints["user"] = function (string $requestMethod, array $requestData): void 
 
 /*sale-----------*/
 $endpoints["sale"] = function (string $requestMethod, array $requestData): void {
-    if ($requestMethod === 'GET') {
-        $sales = Sale::load(); // Load all sales from the database
-        sendResponse($sales);
-    } elseif ($requestMethod === 'POST') {
-        $userId = $requestData['userId'] ?? null;
-        $productId = $requestData['productId'] ?? null;
+                                if ($requestMethod === 'GET') {
+                                    $sales = Sale::load(); // Load all sales from the database
+                                    sendResponse($sales);
+                                } elseif ($requestMethod === 'POST') {
+                                    $userId = $requestData['userId'] ?? null;
+                                    $productId = $requestData['productId'] ?? null;
+                                    
+                                    if (!$userId || !$productId) {
+                                        sendResponse(null, 400, 'Missing userId or productId');
+                                        return;
+                                    }
         
-        if (!$userId || !$productId) {
-            sendResponse(null, 400, 'Missing userId or productId');
-            return;
-        }
-        
-        $sale = new Sale($userId, $productId);
-        $sale = Sale::save($sale);
-        sendResponse($sale, 201);
-    } elseif ($requestMethod === 'DELETE') {
-        $id = $requestData['id'] ?? null;
-        
-        if (!$id) {
-            sendResponse(null, 400, 'Missing sale ID');
-            return;
-        }
-        
-        $deleted = Sale::delete($id);
-        if ($deleted) {
-            sendResponse(null, 200, 'Sale deleted successfully');
-        } else {
-            sendResponse(null, 404, 'Sale not found');
-        }
-    } else {
-        sendResponse(null, 405, 'Method Not Allowed');
-    }
+                                    $sale = new Sale($userId, $productId);
+                                    $sale = Sale::save($sale);
+                                    sendResponse($sale, 201);
+                                    } elseif ($requestMethod === 'DELETE') {
+                                        $id = $requestData['id'] ?? null;
+                                        
+                                        if (!$id) {
+                                            sendResponse(null, 400, 'Missing sale ID');
+                                            return;
+                                        }
+                                        
+                                        $deleted = Sale::delete($id);
+                                        if ($deleted) {
+                                            sendResponse(null, 200, 'Sale deleted successfully');
+                                        } else {
+                                            sendResponse(null, 404, 'Sale not found');
+                                        }
+                                    } else {
+                                        sendResponse(null, 405, 'Method Not Allowed');
+                                    }
 };
 
 
@@ -215,6 +221,21 @@ $endpoints['check-warranty'] = function (string $requestMethod, array $requestDa
     sendResponse($sales, 200);
 };
 
+/*autentication*/
+$endpoints["login"] = function (string $requestMethod, array $requestData): void {
+                            if ($requestMethod === 'POST') { //
+                                $email = $requestData['email'];
+                                $password = $requestData['password'];
+                                $user = new User($email, $password); //informacio userrol megszerezve! Most kerunk Tokent! 
+                                AuthController::login($user);
+                            }
+};
+
+$endpoints["logout"] = function (string $requestMethod, array $requestData): void {
+    if ($requestMethod === 'POST') { //
+        AuthController::logout(  $requestData);
+    }
+};
 
 
 

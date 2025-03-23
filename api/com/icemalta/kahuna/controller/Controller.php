@@ -29,10 +29,10 @@ class Controller {
 /*CheckToken*/
     public static function checkToken(array $requestData): bool {
 
-                                        if (!isset($requestData['api_user']) || !isset($requestData['api_token'])) {
+                                        if (!isset($requestData['user']) || !isset($requestData['token'])) {
                                             return false;
                                         }
-                                        $token = new AccessToken($requestData['api_user'], $requestData['api_token']);
+                                        $token = new AccessToken($requestData['user'], $requestData['token']);
                                         return AccessToken::verify($token);
     }
 }
