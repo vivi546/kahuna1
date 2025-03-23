@@ -4,7 +4,18 @@
   eloszor a 'listings_view legyen. ez autentikus view, tehat meg kell oldani, hogy az user autentizalva legyen.
 
   The authentication model is present in model/User.php (for logging in and logging out)
-  we use model/AccessToken.php, to generate access tokens*/
+  we use model/AccessToken.php, to generate access tokens
+  
+  
+  endpointoknal mihez akarok autentikaciot: eloszor kesz a 'cucc' majd 'korbeautentikalom?
+  ezeket: 
+  
+  Sales - POST API
+  Check-warranty - GET API
+  Product - POST API
+  User - GET API - login
+
+  */
 
   namespace com\icemalta\kahuna\controller;
   use com\icemalta\kahuna\model\{accessToken, User};
@@ -24,9 +35,9 @@
                       }
 
 
-        public static function logout(array $data): void { //forToken not for user
-                                        if (self::checkToken($data)) { 
-                                                            $userId = $data['user']; 
+        public static function logout(array $requestData): void { //forToken not for user
+                                        if (self::checkToken($requestData)) { // ez egy autentikacio implementacio, miutan a class kesz lett.
+                                                            $userId = $requestData['user']; 
                                                             $token = new AccessToken(userId: $userId); 
                                                             $token = AccessToken::delete($token); 
                                                             self::sendResponse(data: ['message' => 'Logged out']); 

@@ -12,12 +12,14 @@ class UserController extends Controller {
         self::sendResponse($data = $user, $code = 201);
     }
 
-    public static function getUserByEmail(string $email): void {
-        $user = User::getUser($email);
-        if($user){
-            self::sendResponse($user);
-        } else {
-            self::sendResponse(null, 404, 'User not found');
+    public static function getUserByEmail(string $email, array $data): void {
+        if (self::checkToken($data)) {
+            $user = User::getUser($email);
+            if($user){
+                self::sendResponse($user);
+            } else {
+                self::sendResponse(null, 404, 'User not found');
+            }
         }
     }
 

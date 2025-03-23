@@ -145,7 +145,7 @@ $endpoints["user"] = function (string $requestMethod, array $requestData): void 
                                 } elseif($requestMethod === 'GET') {
                                     $email = $requestData['email'];
                                     $user = new User(email: $email);
-                                    UserController::getUserByEmail($email);
+                                    UserController::getUserByEmail($email, $requestData);
                                 } else if($requestMethod === 'DELETE') {
                                                         $email = $_GET['email'];
                                                         $user = new User(email: $email);
@@ -163,6 +163,7 @@ $endpoints["sale"] = function (string $requestMethod, array $requestData): void 
                                     $sales = Sale::load(); // Load all sales from the database
                                     sendResponse($sales);
                                 } elseif ($requestMethod === 'POST') {
+                                    // Authentikaci kell ide
                                     $userId = $requestData['userId'] ?? null;
                                     $productId = $requestData['productId'] ?? null;
                                     
@@ -233,7 +234,7 @@ $endpoints["login"] = function (string $requestMethod, array $requestData): void
 
 $endpoints["logout"] = function (string $requestMethod, array $requestData): void {
     if ($requestMethod === 'POST') { //
-        AuthController::logout(  $requestData);
+        AuthController::logout(  $requestData); // Folder> logout > $
     }
 };
 

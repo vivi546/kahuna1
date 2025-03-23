@@ -26,7 +26,7 @@ class Controller {
     }
 
 
-/*CheckToken*/
+/*CheckToken, ellenorzi hogy be van e jelentkezve a user*/
     public static function checkToken(array $requestData): bool {
 
                                         if (!isset($requestData['user']) || !isset($requestData['token'])) {
