@@ -99,11 +99,11 @@ class User implements JsonSerializable {
 
  
     /*✅*/
-    public static function delete(User $user): bool {
+    public static function delete(string $email): bool {
                                         $sql = 'DELETE FROM User
-                                                WHERE id = :id';
+                                                WHERE email = :email';
                                                 $sth = self::$db->prepare($sql); 
-                                                $sth->bindValue('id', $user->getId()); 
+                                                $sth->bindValue('email', $email); 
                                                 $sth->execute();
                                                 return $sth->rowCount() > 0;
     }

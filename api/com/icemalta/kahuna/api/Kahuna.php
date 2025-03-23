@@ -2,6 +2,7 @@
 /*util*/
 require 'com/icemalta/kahuna/util/ApiUtil.php';
 /*/controller*/
+require 'com/icemalta/kahuna/controller/UserController.php';
 require 'com/icemalta/kahuna/controller/ProductController.php';
 /*/model*/
 require 'com/icemalta/kahuna/model/Sales.php';   
@@ -10,6 +11,7 @@ require 'com/icemalta/kahuna/model/User.php';
 
 
 /*model*/
+use com\icemalta\kahuna\controller\UserController;
 use com\icemalta\kahuna\model\Product;
 use com\icemalta\kahuna\model\Sale;
 use com\icemalta\kahuna\model\User;
@@ -106,23 +108,19 @@ $endpoints["404"] = function (string $requestMethod, array $requestData): void {
 /*Product----------*/
 $endpoints["product"] = function (string $requestMethod, array $requestData): void {
                     if($requestMethod === 'GET') {
-                                $products = Product::load(); /*load in class_Product */
-                                sendResponse($products);
+                                ProductController::load(); /*load in class_Product */
                     }
                         elseif($requestMethod === 'POST') {
-                                $serial = $requestData['serial'];
-                                $name = $requestData['name'];
-                                $warranty = $requestData['warranty'];
+                                        $serial = $requestData['serial'];
+                                        $name = $requestData['name'];
+                                        $warranty = $requestData['warranty'];
+                                        ProductController::save($serial, $name, $warranty);
 
-                                $product = new Product($serial, $name, $warranty);
-                                $product = Product::save($product);
-                                sendResponse($product, 201); 
                         }   elseif ($requestMethod === 'DELETE') {
-                            $id = $requestData['id'];
-                            sendResponse(null, 501, 'Deleting');
-
+                            $id = $_GET['id'];
+                            ProductController::delete($id);
                         } else {
-                            sendResponse(null, 405, 'Method Not allowed');
+                            sendResponse(null, 405, 'Method Not allowed 😳');
                                  }
 };
 
@@ -134,21 +132,23 @@ $endpoints["user"] = function (string $requestMethod, array $requestData): void 
                                                         $email = $requestData['email'];
                                                         $password = $requestData['password'];
                                                         $user = new User($email, $password);
-                                                        $user = User::save($user);
+                                                        // $user = User::save($user);
+                                                        UserController::register($requestData);  //>igy hivjuk controllert !
+
                                                         sendResponse($user, 201);
                                 } elseif($requestMethod === 'GET') {
                                     $email = $requestData['email'];
                                     $user = new User(email: $email);
-                                    $user = User::getUser($email);
-                                    sendResponse($user);
-                                } else if ($requestMethod === 'PATCH') {
-                                                        sendResponse(null, 501, 'Update not implemented yet');
-                                    }   else if($requestMethod === 'DELETE') {
-                                                        sendResponse(null, 501, 'Deleting' );
+                                    UserController::getUserByEmail($email);
+                                } else if($requestMethod === 'DELETE') {
+                                                        $email = $_GET['email'];
+                                                        $user = new User(email: $email);
+                                                        UserController::delete(email: $email);
                                         }   else {
                                                 sendResponse(null, 405, 'Method_not_Allowed');
                                             }
 };
+
 
 
 /*sale-----------*/
@@ -186,6 +186,9 @@ $endpoints["sale"] = function (string $requestMethod, array $requestData): void 
         sendResponse(null, 405, 'Method Not Allowed');
     }
 };
+
+
+
 
 /*warranty----------------*/
 $endpoints['check-warranty'] = function (string $requestMethod, array $requestData): void {

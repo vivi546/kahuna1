@@ -1,12 +1,8 @@
-<!--
-    TODO This is just a sample page to ensure the environment is working. 
-    Replace with your own fantastic code!
--->
 <!doctype html>
 <html lang="en">
 
 <head>
-    <title>SC-BED Environment Test</title>
+    <title>Kahuna API Client</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -14,36 +10,256 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
-
-
 <body data-bs-theme="dark">
-    <div class="container d-flex flex-column">
-                <div class="d-flex justify-content-center" style="margin-bottom: 20px;">
-                    <h1>Turtles</h1>
-                </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <h1>Kahuna API Client</h1>
+        </div>
 
-                <div class="d-flex justify-content-center" style="margin-bottom: 20px;">
-                    <p>This is Client</p>
-                </div>
+        <div class="row justify-content-center">
+            <div id="productList"></div>
+        </div>
 
-                <div class="d-flex justify-content-center" style="margin-bottom: 20px;">
-                    <div id="productList"></div>
-                </div>
+        <div class="row justify-content-center">
+            <h2>Add Product</h2>
+        </div>
 
-                <div class="d-flex justify-content-center" style="margin-bottom: 20px;">
-                    <h1>Add Product</h1>
-                </div>
+        <form id="productForm" class="row justify-content-center">
+            <div class="mb-3 col-md-6">
+                <label for="serial" class="form-label">Serial</label>
+                <input type="text" class="form-control" id="serial" name="serial">
+            </div>
+            <div class="mb-3 col-md-6">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name">
+            </div>
+            <div class="mb-3 col-md-6">
+                <label for="warranty" class="form-label">Warranty (months)</label>
+                <input type="number" class="form-control" id="warranty" name="warranty">
+            </div>
+            <div class="col-md-12 text-center">
+                <button type="button" class="btn btn-primary" onclick="addProduct()">Add Product</button>
+            </div>
+        </form>
 
-                <form name="productForm" id="productForm" class="form">
-                    <label for="serial>Serial</label>
-                    <input type="text" name="serial" id="serial"><br>
-                </form>
+        <div class="row justify-content-center mt-4">
+            <h2>Delete Product</h2>
+        </div>
+
+        <form id="deleteProductForm" class="row justify-content-center">
+            <div class="mb-3 col-md-6">
+                <label for="deleteProductId" class="form-label">Product ID</label>
+                <input type="number" class="form-control" id="deleteProductId" name="id">
+            </div>
+            <div class="col-md-12 text-center">
+                <button type="button" class="btn btn-danger" onclick="deleteProduct()">Delete Product</button>
+            </div>
+        </form>
+
+        <div class="row justify-content-center mt-4">
+            <h2>Register User</h2>
+        </div>
+
+        <form id="registerUserForm" class="row justify-content-center">
+            <div class="mb-3 col-md-6">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
+            <div class="mb-3 col-md-6">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password">
+            </div>
+            <div class="col-md-12 text-center">
+                <button type="button" class="btn btn-success" onclick="registerUser()">Register User</button>
+            </div>
+        </form>
+
+        <div class="row justify-content-center mt-4">
+            <h2>Delete User</h2>
+        </div>
+
+        <form id="deleteUserForm" class="row justify-content-center">
+            <div class="mb-3 col-md-6">
+                <label for="deleteUserEmail" class="form-label">User Email</label>
+                <input type="email" class="form-control" id="deleteUserEmail" name="email">
+            </div>
+            <div class="col-md-12 text-center">
+                <button type="button" class="btn btn-danger" onclick="deleteUser()">Delete User</button>
+            </div>
+        </form>
+
+        <div class="row justify-content-center mt-4">
+            <h2>Add Sale</h2>
+        </div>
+
+        <form id="addSaleForm" class="row justify-content-center">
+            <div class="mb-3 col-md-6">
+                <label for="saleUserId" class="form-label">User ID</label>
+                <input type="number" class="form-control" id="saleUserId" name="userId">
+            </div>
+            <div class="mb-3 col-md-6">
+                <label for="saleProductId" class="form-label">Product ID</label>
+                <input type="number" class="form-control" id="saleProductId" name="productId">
+            </div>
+            <div class="col-md-12 text-center">
+                <button type="button" class="btn btn-info" onclick="addSale()">Add Sale</button>
+            </div>
+        </form>
+
+        <div class="row justify-content-center mt-4">
+            <h2>Delete Sale</h2>
+        </div>
+
+        <form id="deleteSaleForm" class="row justify-content-center">
+            <div class="mb-3 col-md-6">
+                <label for="deleteSaleId" class="form-label">Sale ID</label>
+                <input type="number" class="form-control" id="deleteSaleId" name="id">
+            </div>
+            <div class="col-md-12 text-center">
+                <button type="button" class="btn btn-danger" onclick="deleteSale()">Delete Sale</button>
+            </div>
+        </form>
+
+        <div class="row justify-content-center mt-4">
+            <h2>Check Warranty</h2>
+        </div>
+        <form id="checkWarrantyForm" class="row justify-content-center">
+            <div class="mb-3 col-md-6">
+                <label for="warrantyUserId" class="form-label">User ID</label>
+                <input type="number" class="form-control" id="warrantyUserId" name="userId">
+            </div>
+            <div class="mb-3 col-md-6">
+                <label for="warrantySerial" class="form-label">Serial</label>
+                <input type="text" class="form-control" id="warrantySerial" name="serial">
+            </div>
+            <div class="col-md-12 text-center">
+                <button type="button" class="btn btn-warning" onclick="checkWarranty()">Check Warranty</button>
+            </div>
+        </form>
     </div>
 
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-                crossorigin="anonymous"></script>
-            <script src="js/cat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script>
+        const API_URL = 'http://localhost:8000/kahuna/api/';
+
+        function fetchProducts() {
+            fetch(API_URL + 'product')
+                .then(response => response.json())
+                .then(data => {
+                    const productListDiv = document.getElementById('productList');
+                    if (data && data.data) {
+                        productListDiv.innerHTML = '<h3>Products:</h3><ul>' +
+                            data.data.map(product => `<li>${product.name} (Serial: ${product.serial}, Warranty: ${product.warranty} months)</li>`).join('') +
+                            '</ul>';
+                    } else {
+                        productListDiv.innerHTML = '<p>No products found.</p>';
+                    }
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        }
+
+        function addProduct() {
+            const form = document.getElementById('productForm');
+            const formData = new FormData(form);
+            fetch(API_URL + 'product', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(JSON.stringify(data));
+                    fetchProducts();
+                })
+                .catch(error => console.error('Error adding product:', error));
+            };
+        
+
+        function deleteProduct() {
+            const id = document.getElementById('deleteProductId').value;
+            fetch(API_URL + `product?id=${id}`, {
+                method: 'DELETE',
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(JSON.stringify(data));
+                    fetchProducts();
+                })
+                .catch(error => console.error('Error deleting product:', error));
+        }
+
+        function registerUser() {
+            const form = document.getElementById('registerUserForm');
+            const formData = new FormData(form);
+            fetch(API_URL + 'user', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(JSON.stringify(data));
+                })
+                .catch(error => console.error('Error registering user:', error));
+        }
+
+        function deleteUser() {
+            const email = document.getElementById('deleteUserEmail').value;
+            fetch(API_URL + `user?email=${email}`, {
+                method: 'DELETE',
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(JSON.stringify(data));
+                })
+                .catch(error => console.error('Error deleting user:', error));
+        }
+
+        function addSale() {
+            const form = document.getElementById('addSaleForm');
+            const formData = new FormData(form);
+            fetch(API_URL + 'sale', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(JSON.stringify(data));
+                })
+                .catch(error => console.error('Error adding sale:', error));
+        }
+
+        function deleteSale() {
+            const id = document.getElementById('deleteSaleId').value;
+            fetch(API_URL + `sale?id=${id}`, {
+                method: 'DELETE',
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(JSON.stringify(data));
+                })
+                .catch(error => console.error('Error deleting sale:', error));
+        }
+
+        function checkWarranty() {
+            const form = document.getElementById('checkWarrantyForm');
+            const formData = new FormData(form);
+            let params = new URLSearchParams(formData).toString();
+
+            fetch(API_URL + `check-warranty?${params}`, {
+                method: 'GET',
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(JSON.stringify(data));
+            })
+            .catch(error => console.error('Error checking warranty:', error));
+        }
+
+        // Load products on page load
+        fetchProducts();
+
+    </script>
 
 </body>
 
