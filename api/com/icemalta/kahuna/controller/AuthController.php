@@ -17,51 +17,53 @@
 
   */
 
-  namespace com\icemalta\kahuna\controller;
-  use com\icemalta\kahuna\model\{accessToken, User};
+namespace com\icemalta\kahuna\controller;
 
-  class AuthController extends Controller {
+use com\icemalta\kahuna\model\{accessToken, User};
 
-                      public static function login(User $user): void { //ez a kod csupan egyeztetest vegez, es tokent ad, vagy nem ad.
-                                                      $user = User::authenticate($user);
+class AuthController extends Controller
+{
 
-                                                      if ($user) { 
-                                                            $token = new AccessToken(userId: $user->getId()); 
-                                                            $token = AccessToken::save($token); 
-                                                            self::sendResponse(data: ['user' => $user->getId(), 'token' => $token->getToken()]); 
-                                                      } else { 
-                                                        self::sendResponse(code: 401, error: 'Login failed.'); 
-                                                              }
-                      }
+      public static function login(User $user): void
+      { //ez a kod csupan egyeztetest vegez, es tokent ad, vagy nem ad.
+            $user = User::authenticate($user);
 
-
-        public static function logout(array $requestData): void { //forToken not for user
-                                        if (self::checkToken($requestData)) { // ez egy autentikacio implementacio, miutan a class kesz lett.
-                                                            $userId = $requestData['user']; 
-                                                            $token = new AccessToken(userId: $userId); 
-                                                            $token = AccessToken::delete($token); 
-                                                            self::sendResponse(data: ['message' => 'Logged out']); 
-                                        }   else { 
-                                            self::sendResponse(code: 403, error: 'Missing Token.'); 
-                                                }
-        }
+            if ($user) {
+                  $token = new AccessToken(userId: $user->getId());
+                  $token = AccessToken::save($token);
+                  self::sendResponse(data: ['user' => $user->getId(), 'token' => $token->getToken()]);
+            } else {
+                  self::sendResponse(code: 401, error: 'Login failed.');
+            }
+      }
 
 
-
-        public static function verifyToken(array $params, array $data): void {
-                                        if (self::checkToken($data)) { 
-                                                  self::sendResponse(data: ['valid' => true, 'token' => $data['api_token']]); 
-                                        }   else { 
-                                              self::sendResponse(data: ['valid' => false, 'token' => $data['api_token']]); 
-                                                }   
-        }
-
-
-        public static function connectionTest(array $params, array $data): void {
-                                            self::sendResponse(data: 'Welcome Api!');
-        }
+      public static function logout(array $requestData): void
+      { //forToken not for user
+            if (self::checkToken($requestData)) { // ez egy autentikacio implementacio, miutan a class kesz lett.
+                  $userId = $requestData['user'];
+                  $token = new AccessToken(userId: $userId);
+                  $token = AccessToken::delete($token);
+                  self::sendResponse(data: ['message' => 'Logged out']);
+            } else {
+                  self::sendResponse(code: 403, error: 'Missing Token.');
+            }
+      }
 
 
 
+      public static function verifyToken(array $params, array $data): void
+      {
+            if (self::checkToken($data)) {
+                  self::sendResponse(data: ['valid' => true, 'token' => $data['api_token']]);
+            } else {
+                  self::sendResponse(data: ['valid' => false, 'token' => $data['api_token']]);
+            }
+      }
 
-  }/*class~end*/
+
+      public static function connectionTest(array $params, array $data): void
+      {
+            self::sendResponse(data: 'Welcome Api!');
+      }
+}/*class~end*/

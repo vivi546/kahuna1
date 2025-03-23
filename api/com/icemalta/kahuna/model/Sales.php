@@ -108,7 +108,7 @@ class Sale implements JsonSerializable {
                                         // Calculate remaining time
                                         $interval = $now->diff($expiryDate);
                                         $remainingTimeFormatted = ($now < $expiryDate) 
-                                                                ? sprintf('%d nap, %d óra, %d perc, %d másodperc', 
+                                                                ? sprintf('%d day, %d hour, %d minute, %d second', 
                                                                         $interval->d, $interval->h, $interval->i, $interval->s)
                                                                 : 'Garanty over!';
             
@@ -127,6 +127,10 @@ class Sale implements JsonSerializable {
                             return $results; // Return an array of results
     }
     
+   
     
+/*g&s*/
+
+
     
 }

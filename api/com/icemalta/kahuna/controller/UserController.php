@@ -24,17 +24,10 @@ class UserController extends Controller {
     }
 
     public static function delete(string $email): void {
-        // $user = User::getUser($email);
-        // if($user){
+       
             $delete = User::delete($email);
-            // if($delete){
+          
                 self::sendResponse(null, 200, 'User deleted successfully');
-            // } else {
-                // self::sendResponse(null, 500, 'Failed to delete user');
-            // }
-        // }else {
-            // self::sendResponse(null, 404, 'User not found');
-        // }
     }
 
     // You can add an authenticate function here if needed.
